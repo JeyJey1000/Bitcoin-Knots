@@ -29,6 +29,7 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 static const int CLIENT_VERSION =
                              10000 * CLIENT_VERSION_MAJOR
