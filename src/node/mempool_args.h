@@ -9,6 +9,7 @@
 #include <util/result.h>
 
 #include <string>
+#include <cstdint>
 
 class ArgsManager;
 class CChainParams;
