@@ -129,6 +129,8 @@ AC_PATH_TOOL([OBJCOPY], [objcopy])
 AC_PATH_PROG([DOXYGEN], [doxygen])
 AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 
+AC_ARG_VAR([PYTHONPATH], [Augments the default search path for python module files])
+
 AC_ARG_ENABLE([wallet],
   [AS_HELP_STRING([--disable-wallet],
   [disable wallet (enabled by default)])],
@@ -819,6 +821,7 @@ case $host in
            AC_PATH_TOOL([DSYMUTIL], [dsymutil], [dsymutil])
            AC_PATH_TOOL([INSTALL_NAME_TOOL], [install_name_tool], [install_name_tool])
            AC_PATH_TOOL([OTOOL], [otool], [otool])
+           AC_PATH_PROGS([XORRISOFS], [xorrisofs], [xorrisofs])
            AC_PATH_PROG([ZIP], [zip], [zip])
 
            dnl libtool will try to strip the static lib, which is a problem for
