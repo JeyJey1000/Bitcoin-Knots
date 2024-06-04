@@ -31,6 +31,7 @@
 #include <util/batchpriority.h>
 #include <util/check.h>
 #include <util/fs.h>
+#include <util/ioprio.h>
 #include <util/overflow.h>
 #include <util/signalinterrupt.h>
 #include <util/strencodings.h>
@@ -1118,9 +1119,12 @@ bool BlockManager::WriteUndoDataForBlock(const CBlockUndo& blockundo, BlockValid
     return true;
 }
 
-bool BlockManager::ReadBlockFromDisk(CBlock& block, const FlatFilePos& pos) const
+bool BlockManager::ReadBlockFromDisk(CBlock& block, const FlatFilePos& pos, const bool lowprio) const
 {
     block.SetNull();
+
+    {
+    IOPRIO_IDLER(lowprio);
 
     // Open history file to read
     AutoFile filein{OpenBlockFile(pos, true)};
@@ -1135,6 +1139,8 @@ bool BlockManager::ReadBlockFromDisk(CBlock& block, const FlatFilePos& pos) cons
         return error("%s: Deserialize or I/O error - %s at %s", __func__, e.what(), pos.ToString());
     }
 
+    }  // end IOPRIO_IDLER scope
+
     // Check the header
     if (!CheckProofOfWork(block.GetHash(), block.nBits, GetConsensus())) {
         return error("ReadBlockFromDisk: Errors in block header at %s", pos.ToString());
@@ -1148,11 +1154,11 @@ bool BlockManager::ReadBlockFromDisk(CBlock& block, const FlatFilePos& pos) cons
     return true;
 }
 
-bool BlockManager::ReadBlockFromDisk(CBlock& block, const CBlockIndex& index) const
+bool BlockManager::ReadBlockFromDisk(CBlock& block, const CBlockIndex& index, const bool lowprio) const
 {
     const FlatFilePos block_pos{WITH_LOCK(cs_main, return index.GetBlockPos())};
 
-    if (!ReadBlockFromDisk(block, block_pos)) {
+    if (!ReadBlockFromDisk(block, block_pos, lowprio)) {
         return false;
     }
     if (block.GetHash() != index.GetBlockHash()) {
@@ -1162,7 +1168,7 @@ bool BlockManager::ReadBlockFromDisk(CBlock& block, const CBlockIndex& index) co
     return true;
 }
 
-bool BlockManager::ReadRawBlockFromDisk(std::vector<uint8_t>& block, const FlatFilePos& pos) const
+bool BlockManager::ReadRawBlockFromDisk(std::vector<uint8_t>& block, const FlatFilePos& pos, const bool lowprio) const
 {
     FlatFilePos hpos = pos;
     // If nPos is less than 8 the pos is null and we don't have the block data
@@ -1172,6 +1178,9 @@ bool BlockManager::ReadRawBlockFromDisk(std::vector<uint8_t>& block, const FlatF
         return false;
     }
     hpos.nPos -= 8; // Seek back 8 bytes for meta header
+
+    IOPRIO_IDLER(lowprio);
+
     AutoFile filein{OpenBlockFile(hpos, true)};
     if (filein.IsNull()) {
         return error("%s: OpenBlockFile failed for %s", __func__, pos.ToString());
