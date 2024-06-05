@@ -125,8 +125,10 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "signrawtransactionwithwallet", 1, "prevtxs" },
     { "sendrawtransaction", 1, "maxfeerate" },
     { "sendrawtransaction", 2, "maxburnamount" },
+    { "sendrawtransaction", 3, "ignore_rejects" },
     { "testmempoolaccept", 0, "rawtxs" },
     { "testmempoolaccept", 1, "maxfeerate" },
+    { "testmempoolaccept", 2, "ignore_rejects" },
     { "submitpackage", 0, "package" },
     { "combinerawtransaction", 0, "txs" },
     { "fundrawtransaction", 1, "options" },
@@ -245,12 +247,14 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getblockstats", 1, "stats" },
     { "pruneblockchain", 0, "height" },
     { "keypoolrefill", 0, "newsize" },
+    { "getmempoolinfo", 0, "fee_histogram" },
+    { "getmempoolinfo", 0, "with_fee_histogram" },
     { "getrawmempool", 0, "verbose" },
     { "getrawmempool", 1, "mempool_sequence" },
     { "estimatesmartfee", 0, "conf_target" },
     { "estimaterawfee", 0, "conf_target" },
     { "estimaterawfee", 1, "threshold" },
-    { "prioritisetransaction", 1, "dummy" },
+    { "prioritisetransaction", 1, "priority_delta" },
     { "prioritisetransaction", 2, "fee_delta" },
     { "setban", 2, "bantime" },
     { "setban", 3, "absolute" },
@@ -384,7 +388,7 @@ UniValue RPCConvertNamedValues(const std::string &strMethod, const std::vector<s
         // Use pushKVEnd instead of pushKV to avoid overwriting an explicit
         // "args" value with an implicit one. Let the RPC server handle the
         // request as given.
-        params.pushKVEnd("args", positional_args);
+        params.pushKVEnd("args", std::move(positional_args));
     }
 
     return params;
