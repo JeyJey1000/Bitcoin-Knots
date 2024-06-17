@@ -786,7 +786,7 @@ void InitParameterInteraction(ArgsManager& args)
         args.SoftSetArg("-datacarriersize", "83");
         args.SoftSetArg("-maxscriptsize", strprintf("%s", std::numeric_limits<unsigned int>::max()));
         args.SoftSetArg("-mempoolreplacement", args.GetBoolArg("-mempoolfullrbf", false) ? "fee,-optin" : "fee,optin");
-        args.SoftSetArg("-mempooltruc", "reject");
+        args.SoftSetArg("-mempooltruc", args.GetBoolArg("-acceptnonstdtxn", DEFAULT_ACCEPT_NON_STD_TXN) ? "enforce" : "reject");
         args.SoftSetArg("-spkreuse", "allow");
         args.SoftSetArg("-blockprioritysize", "0");
         args.SoftSetArg("-blockmaxsize", "4000000");
