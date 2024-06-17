@@ -793,6 +793,10 @@ void InitParameterInteraction(ArgsManager& args)
         args.SoftSetArg("-blockmaxweight", "3996000");
     }
 
+    if (args.GetBoolArg("-acceptnonstdtxn", DEFAULT_ACCEPT_NON_STD_TXN) && (!args.IsArgSet("-mempooltruc")) && DEFAULT_MEMPOOL_TRUC_POLICY == TRUCPolicy::Reject) {
+        args.SoftSetArg("-mempooltruc", "accept");
+    }
+
     // when specifying an explicit binding address, you want to listen on it
     // even when -connect or -proxy is specified
     if (args.IsArgSet("-bind")) {
