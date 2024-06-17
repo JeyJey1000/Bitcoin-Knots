@@ -854,7 +854,7 @@ static RPCHelpMan getblocktemplate()
             if (!tmpl) throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
             return TemplateToJSON(consensusParams, chainman, &*tmpl, local_pindexPrev, setClientRules, tx_update_counter);
         }
-        Assume(options == options_def);
+        CHECK_NONFATAL(options == options_def);
 
         // Clear pindexPrev so future calls make a new block, despite any failures from here on
         pindexPrev = nullptr;
