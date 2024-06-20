@@ -7,6 +7,7 @@
 
 #include <crypto/common.h>
 #include <hash.h>
+#include <logging.h>
 #include <uint256.h>
 #include <util/hash_type.h>
 #include <util/strencodings.h>
@@ -293,6 +294,7 @@ std::pair<size_t, size_t> CScript::DatacarrierBytes() const
     std::vector<unsigned char> push_data;
     unsigned int inside_noop{0}, inside_conditional{0};
     CScript::const_iterator opcode_it = begin(), data_began = begin();
+    LogPrintf("LJR begin=%p end=%p\n", begin().ptr, end().ptr);
     for (CScript::const_iterator it = begin(); it < end(); last_opcode = opcode) {
         opcode_it = it;
         if (!GetOp(it, opcode, push_data)) {
@@ -305,6 +307,7 @@ std::pair<size_t, size_t> CScript::DatacarrierBytes() const
         } else if (opcode == OP_DROP && last_opcode <= OP_PUSHDATA4) {
             counted += it - data_began;
         }
+        LogPrintf("LJR opcode=%s PD4=%s data_began=%p opcode_it=%p it=%p last_opcode=%s counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, opcode_it.ptr, it.ptr, last_opcode, counted);
     }
     return {0, counted};
 }
