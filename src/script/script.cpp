@@ -294,8 +294,8 @@ std::pair<size_t, size_t> CScript::DatacarrierBytes() const
     std::vector<unsigned char> push_data;
     unsigned int inside_noop{0}, inside_conditional{0};
     CScript::const_iterator opcode_it = begin(), data_began = begin();
-    LogPrintf("LJR begin=%p end=%p\n", begin().ptr, end().ptr);
-    for (CScript::const_iterator it = begin(); it < end(); last_opcode = opcode) {
+    // LogPrintf("LJR begin=%p end=%p\n", begin().ptr, end().ptr);
+    for (CScript::const_iterator it = begin(); it < end(); ) {
         opcode_it = it;
         if (!GetOp(it, opcode, push_data)) {
             // Invalid scripts are necessarily all data
@@ -308,8 +308,9 @@ std::pair<size_t, size_t> CScript::DatacarrierBytes() const
             counted += it - data_began;
         }
         // LogPrintf("LJR opcode=%s PD4=%s data_began=%p opcode_it=%p it=%p last_opcode=%s counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, opcode_it.ptr, it.ptr, last_opcode, counted);
+        last_opcode = opcode;
     }
-    LogPrintf("LJR opcode=%s PD4=%s data_began=%p last_opcode=%s counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, last_opcode, counted);
+    // LogPrintf("LJR opcode=%s PD4=%s data_began=%p last_opcode=%s counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, last_opcode, counted);
     return {0, counted};
 }
 
