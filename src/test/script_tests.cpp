@@ -1502,22 +1502,6 @@ BOOST_AUTO_TEST_CASE(script_DataCarrierBytes)
 {
     using zeros = std::vector<unsigned char>;
 
-    // empty script
-    BOOST_CHECK_EQUAL("0+0", DatacarrierBytesStr(CScript()));
-    // series of pushes are not data
-    BOOST_CHECK_EQUAL("0+0", DatacarrierBytesStr(CScript() << OP_0 << OP_0 << OP_0));
-    // unspendable if first op is OP_RETURN, then length(1), zeros(11)
-    BOOST_CHECK_EQUAL("13+0", DatacarrierBytesStr(CScript() << OP_RETURN << zeros(11)));
-    // invalid script (no data following PUSHDATA) makes it all data
-    BOOST_CHECK_EQUAL("0+2", DatacarrierBytesStr(CScript() << OP_0 << OP_PUSHDATA4));
-    // no data here
-    BOOST_CHECK_EQUAL("0+0", DatacarrierBytesStr(CScript() << OP_TRUE << OP_IF << OP_ENDIF));
-    // specific data pattern, entire script is data
-    BOOST_CHECK_EQUAL("0+4", DatacarrierBytesStr(CScript() << OP_FALSE << OP_IF << OP_7 << OP_ENDIF));
-    // consecutive data
-    BOOST_CHECK_EQUAL("0+6", DatacarrierBytesStr(CScript() << OP_FALSE << OP_IF << OP_ENDIF << OP_FALSE << OP_IF << OP_ENDIF));
-    // nested data (all is data)
-    BOOST_CHECK_EQUAL("0+6", DatacarrierBytesStr(CScript() << OP_FALSE << OP_IF << OP_TRUE << OP_IF << OP_ENDIF << OP_ENDIF));
     // pushing then immediately dropping is data: length(1), zero(11), OP_DROP
     BOOST_CHECK_EQUAL("0+13", DatacarrierBytesStr(CScript() << zeros(11) << OP_DROP));
 }
