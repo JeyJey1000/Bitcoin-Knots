@@ -309,7 +309,7 @@ std::pair<size_t, size_t> CScript::DatacarrierBytes() const
         }
         // LogPrintf("LJR opcode=%s PD4=%s data_began=%p opcode_it=%p it=%p last_opcode=%s counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, opcode_it.ptr, it.ptr, last_opcode, counted);
     }
-    // LogPrintf("LJR opcode=%s PD4=%s data_began=%p opcode_it=%p it=X last_opcode=%s counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, opcode_it.ptr, last_opcode, counted);
+    LogPrintf("LJR opcode=%s PD4=%s data_began=%p counted=%s\n", opcode, OP_PUSHDATA4, data_began.ptr, counted);
     return {0, counted};
 }
 
